@@ -1,0 +1,31 @@
+pipeline {
+       agent {
+           label 'master'
+             }
+           tools {
+             maven 'myMaven'
+             jdk 'myJava'
+                }
+            stages {
+               stage ('Checkout the code')
+             {
+                steps {
+                 git branch: 'main', url: 'https://github.com/abhishekpadmanabhan/DevOpsJenkinsPipelineForDocker.git'
+                 }
+             }
+                stage ('Code Compile') {
+               steps {
+                    sh """
+                    mvn compile
+                    """
+                    }
+                  }
+                 stage ('Packaging') {
+                    steps {
+                        sh """
+                        mvn package
+                        """
+                         }
+                    }
+   }
+}
