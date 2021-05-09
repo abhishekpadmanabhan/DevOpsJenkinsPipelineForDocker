@@ -1,20 +1,23 @@
-node {
-           def app    
-           environment {
+pipeline
+{
+environment {
              DOCKER_TLS_VERIFY=1
              DOCKER_HOST='tcp://192.168.99.100:2376'
              DOCKER_CERT_PATH='/Users/Abhi/.docker/machine/machines/default'
              DOCKER_MACHINE_NAME='default'
-               }           
-            stage ('Checkout the code')
+            }
+node {
+           def app    
+           stage ('Checkout the code')
              {
                 checkout scm 
              }
-            stage('Build image') 
-             {         
+           stage('Build image') 
+             {  
+                       
                 app = docker.build("abhishekpadmanabhan/devopsjenkinspipelinefordocker")    
              }
-            stage('Push image') 
+           stage('Push image') 
              {
                 docker.withRegistry('https://registry.hub.docker.com', '0c8e37ff-9788-41d1-9c5d-359267b28d95') 
               {            
@@ -23,3 +26,4 @@ node {
               }    
              }
      }
+}
