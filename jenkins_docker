@@ -1,4 +1,4 @@
-        node {
+node {
            def app    
            environment {
              DOCKER_TLS_VERIFY=1
@@ -8,31 +8,18 @@
                }           
             stage ('Checkout the code')
              {
-                steps {
-                 git branch: 'master', url: 'https://github.com/abhishekpadmanabhan/DevOpsJenkinsPipelineForDocker.git'
-                 }
+                checkout scm 
              }
-            stage ('Code Compile') {
-                steps {
-                 sh """
-                 mvn compile
-                    """
-                    }
-                  }
-            stage ('Packaging') {
-                steps {
-                 sh """
-                 mvn package
-                    """
-                     }
-                    }
-            stage('Build image') {         
+            stage('Build image') 
+             {         
                 app = docker.build("abhishekpadmanabhan/devopsjenkinspipelinefordocker")    
-       }
-            stage('Push image') {
-                docker.withRegistry('https://registry.hub.docker.com', '0c8e37ff-9788-41d1-9c5d-359267b28d95') {            
+             }
+            stage('Push image') 
+             {
+                docker.withRegistry('https://registry.hub.docker.com', '0c8e37ff-9788-41d1-9c5d-359267b28d95') 
+              {            
                 app.push("${env.BUILD_NUMBER}")            
                 app.push("latest")        
               }    
-           }
-  }
+             }
+     }
