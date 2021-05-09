@@ -1,11 +1,3 @@
-pipeline
-{
-environment {
-             DOCKER_TLS_VERIFY=1
-             DOCKER_HOST='tcp://192.168.99.100:2376'
-             DOCKER_CERT_PATH='/Users/Abhi/.docker/machine/machines/default'
-             DOCKER_MACHINE_NAME='default'
-            }
 node {
            def app    
            stage ('Checkout the code')
@@ -14,7 +6,10 @@ node {
              }
            stage('Build image') 
              {  
-                       
+                env.DOCKER_TLS_VERIFY=1
+                env.DOCKER_HOST='tcp://192.168.99.100:2376'
+                env.DOCKER_CERT_PATH='/Users/Abhi/.docker/machine/machines/default'
+                env.DOCKER_MACHINE_NAME='default'       
                 app = docker.build("abhishekpadmanabhan/devopsjenkinspipelinefordocker")    
              }
            stage('Push image') 
@@ -26,4 +21,3 @@ node {
               }    
              }
      }
-}
