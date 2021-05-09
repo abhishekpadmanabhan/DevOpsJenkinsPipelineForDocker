@@ -2,30 +2,48 @@ pipeline {
        agent {
            label 'master'
              }
+           environment {
+             DOCKER_TLS_VERIFY=1
+             DOCKER_HOST=tcp://192.168.99.100:2376
+             DOCKER_CERT_PATH=/Users/Abhi/.docker/machine/machines/default
+             DOCKER_MACHINE_NAME=default              
+               }
            tools {
              maven 'myMaven'
              jdk 'myJava'
                 }
-            stages {
-               stage ('Checkout the code')
+        node {
+           def app    
+           stages {
+            stage ('Checkout the code')
              {
                 steps {
-                 git branch: 'main', url: 'https://github.com/abhishekpadmanabhan/DevOpsJenkinsPipelineForDocker.git'
+                 git branch: 'master', url: 'https://github.com/abhishekpadmanabhan/DevOpsJenkinsPipelineForDocker.git'
                  }
              }
-                stage ('Code Compile') {
-               steps {
-                    sh """
-                    mvn compile
+            stage ('Code Compile') {
+                steps {
+                 sh """
+                 mvn compile
                     """
                     }
                   }
-                 stage ('Packaging') {
-                    steps {
-                        sh """
-                        mvn package
-                        """
-                         }
+            stage ('Packaging') {
+                steps {
+                 sh """
+                 mvn package
+                    """
+                     }
                     }
+            stage('Build image') {         
+                app = docker.build("abhishekpadmanabhan/devopsjenkinspipelinefordocker")    
+       }
+            stage('Push image') {
+                docker.withRegistry('https://registry.hub.docker.com', '0c8e37ff-9788-41d1-9c5d-359267b28d95') {            
+                app.push("${env.BUILD_NUMBER}")            
+                app.push("latest")        
+              }    
+           }
    }
+  }
 }
